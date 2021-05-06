@@ -1,7 +1,6 @@
 package com.github.grommitz.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,16 +17,17 @@ public class InheritedResourceConfigurationSourceProviderTest {
 	public void setUp() throws Exception {
 	}
 
+	// fails due to the polymorphic connectorFactory field
 	@Test
-	public void open() throws IOException {
+	public void loadDropWizardConfig() throws IOException {
 
-		InheritedResourceConfigurationSourceProvider<ImageFlareWebAppConfig> provider
-				= new InheritedResourceConfigurationSourceProvider<>(ImageFlareWebAppConfig.class);
+		InheritedResourceConfigurationSourceProvider<MyDropwizardConfiguration> provider
+				= new InheritedResourceConfigurationSourceProvider<>(MyDropwizardConfiguration.class);
 
-		InputStream is = provider.open("/profiles/conf-dev.yml");
+		InputStream is = provider.open("/config-prod.yml");
 
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		ImageFlareWebAppConfig v = mapper.readerFor(ImageFlareWebAppConfig.class).readValue(is);
+		MyDropwizardConfiguration v = mapper.readerFor(MyDropwizardConfiguration.class).readValue(is);
 
 		assertThat(v.getAwsConfig().getRegion(), is("eu-west-2"));
 

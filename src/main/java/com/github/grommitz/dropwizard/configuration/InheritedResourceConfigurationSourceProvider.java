@@ -35,8 +35,8 @@ public class InheritedResourceConfigurationSourceProvider<T extends Configuratio
 			String profile = fn.substring(fn.indexOf("-")+1, fn.indexOf("."));
 			String extn = fn.substring(fn.indexOf(".")+1);
 
-			String pathOnly = path.substring(0, path.lastIndexOf("/"));
-			String base = pathOnly + "/" + fn0 + "." + extn;
+			String pathOnly = path.contains("/") ? path.substring(0, path.lastIndexOf("/")) : "";
+			String base = pathOnly + (pathOnly.isEmpty() ? "" : "/") + fn0 + "." + extn;
 
 			System.out.println("fn0 = " + fn0);
 			System.out.println("profile = " + profile);

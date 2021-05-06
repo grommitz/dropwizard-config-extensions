@@ -1,2 +1,2 @@
-aws:
+awsConfig:
   region: eu-west-2

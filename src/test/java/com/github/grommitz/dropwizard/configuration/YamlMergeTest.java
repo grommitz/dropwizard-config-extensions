@@ -18,8 +18,24 @@ import static org.hamcrest.Matchers.is;
 
 public class YamlMergeTest {
 
+	// just load the base config. the polymorphic employee property loads ok.
 	@Test
-	void mergeTest() throws IOException {
+	public void loadTest() throws IOException {
+		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+		ObjectReader objectReader = mapper.readerFor(Config.class);
+		Config myConfig = objectReader.readValue(new File("src/test/resources/yml/base.yml"));
+
+		System.out.println(mapper.writerFor(Config.class).withDefaultPrettyPrinter().writeValueAsString(myConfig));
+
+		assertThat(myConfig.getSchool().getName(), is("The Comp"));
+		assertThat(myConfig.getSchool().getLocation(), is("Alsager"));
+		assertThat(myConfig.getSchool().getEmployee().getName(), is("Mr Andrews"));
+		assertThat(myConfig.getSchool().getEmployee().getAge(), is(60));
+	}
+
+	// try to override the base YML. fails due to the polymorphic employee field.
+	@Test
+	void polymorphicMergeTest() throws IOException {
 		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 		Config myConfig = new Config();
 		ObjectReader objectReader = mapper.readerForUpdating(myConfig);
@@ -35,21 +51,6 @@ public class YamlMergeTest {
 		assertThat(myConfig.getSchool().getEmployee().getAge(), is(31));
 
 	}
-
-	@Test
-	public void polymorphismTest() throws IOException {
-		ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-		ObjectReader objectReader = mapper.readerFor(Config.class);
-		Config myConfig = objectReader.readValue(new File("src/test/resources/yml/base.yml"));
-
-		System.out.println(mapper.writerFor(Config.class).withDefaultPrettyPrinter().writeValueAsString(myConfig));
-
-		assertThat(myConfig.getSchool().getName(), is("The Comp"));
-		assertThat(myConfig.getSchool().getLocation(), is("Alsager"));
-		assertThat(myConfig.getSchool().getEmployee().getName(), is("Mr Andrews"));
-		assertThat(myConfig.getSchool().getEmployee().getAge(), is(60));
-	}
-
 
 	public static class Config {
 		@JsonMerge
